@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Comment Sentiment Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Comment Sentiment Analysis</h1>
+
+        <form method="POST">
+            <label for="video_url">Enter YouTube Video URL:</label>
+            <input type="text" id="video_url" name="video_url" required>
+            <button type="submit">Analyze</button>
+        </form>
+
+        <div class="results-wrapper">
+            {% if plot_url %}
+                <div class="plot-container">
+                    <h2>Sentiment Distribution</h2>
+                    <img src="data:image/png;base64,{{ plot_url }}" alt="Sentiment Distribution">
+                </div>
+            {% endif %}
+
+            {% if sentiment_ratios %}
+                <div class="ratio-container">
+                    <h2>Sentiment Ratios</h2>
+                    <ul>
+                        {% for sentiment, ratio in sentiment_ratios.items() %}
+                            <li><strong>{{ sentiment }}:</strong> {{ "%.2f"|format(ratio) }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if results %}
+                <div class="results-container">
+                    <h2>Sentiment Analysis Results:</h2>
+                    <ul>
+                    {% for result in results %}
+                        <li class="sentiment-{{ result.sentiment | lower }}">
+                            <strong>Comment:</strong> {{ result.comment }} 
+                            <br>
+                            <strong>Predicted Sentiment:</strong> {{ result.sentiment }}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if error_message %}
+            <h2 class="error-message">{{ error_message }}</h2>
+        {% endif %}
+    </div>
+</body>
+</html>
